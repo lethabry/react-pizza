@@ -8,6 +8,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @media (max-width: 658px) {
+      flex-wrap: wrap-reverse;
+      justify-content: center;
+      gap: 20px;
+    }
   }
 
   &__logo {
