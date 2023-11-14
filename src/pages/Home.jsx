@@ -9,21 +9,33 @@ import { getPizzas } from '../utils/api';
 export default function Home() {
   const [pizzas, setPizzas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [activeCategory, setActiveCategory] = useState(0);
+  const [activeSort, setActiveSort] = useState({
+    title: 'популярности',
+    property: 'rating',
+  });
+
   useEffect(() => {
-    getPizzas()
+    setIsLoading(true);
+    getPizzas({
+      category: `${activeCategory === 0 ? '' : activeCategory}`,
+      sortBy: activeSort.property,
+      order: `${activeSort.property === 'rating' ? 'desc' : 'asc'}`,
+    })
       .then((pizzas) => {
         setPizzas(pizzas);
         setIsLoading(false);
       })
       .catch((err) => console.log(err));
     window.scrollTo(0, 0);
-  }, []);
+  }, [activeSort, activeCategory]);
 
   return (
     <div className="container">
       <div className="content__top">
-        <Categories />
-        <Sort />
+        <Categories value={activeCategory} onCategoryClick={(i) => setActiveCategory(i)} />
+        <Sort value={activeSort} onSortClick={(i) => setActiveSort(i)} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">

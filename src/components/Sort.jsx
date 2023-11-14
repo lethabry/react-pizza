@@ -1,14 +1,13 @@
 import { useState } from 'react';
 
-const sort = ['популярности', 'цене', 'алфавиту'];
+import { sort } from '../utils/constants';
 
-export default function Sort() {
+export default function Sort({ value, onSortClick }) {
   const [isOpenSort, setIsOpenSort] = useState(false);
   const handleOpenSort = () => setIsOpenSort(!isOpenSort);
-  const [selectedSort, setSelectedSort] = useState(0);
 
   const handleSelectedSort = (i) => {
-    setSelectedSort(i);
+    onSortClick(i);
     setIsOpenSort(false);
   };
 
@@ -28,18 +27,18 @@ export default function Sort() {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => handleOpenSort()}>{sort[selectedSort]}</span>
+        <span onClick={() => handleOpenSort()}>{value.title}</span>
       </div>
       {isOpenSort && (
         <div className="sort__popup">
           <ul>
             {sort.map((list, i) => (
               <li
-                className={i === selectedSort ? 'active' : ''}
+                className={i === value ? 'active' : ''}
                 key={i}
-                onClick={() => handleSelectedSort(i)}
+                onClick={() => handleSelectedSort(list)}
               >
-                {list}
+                {list.title}
               </li>
             ))}
           </ul>
