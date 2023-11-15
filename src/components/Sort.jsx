@@ -1,13 +1,18 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { sort } from '../utils/constants';
+import { setActiveSort } from '../store/filterSlice';
 
-export default function Sort({ value, onSortClick }) {
+export default function Sort() {
+  const dispatch = useDispatch();
+  const activeSort = useSelector((state) => state.filter.activeSort);
+
   const [isOpenSort, setIsOpenSort] = useState(false);
   const handleOpenSort = () => setIsOpenSort(!isOpenSort);
 
   const handleSelectedSort = (i) => {
-    onSortClick(i);
+    dispatch(setActiveSort(i));
     setIsOpenSort(false);
   };
 
@@ -27,14 +32,14 @@ export default function Sort({ value, onSortClick }) {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => handleOpenSort()}>{value.title}</span>
+        <span onClick={() => handleOpenSort()}>{activeSort.title}</span>
       </div>
       {isOpenSort && (
         <div className="sort__popup">
           <ul>
             {sort.map((list, i) => (
               <li
-                className={i === value ? 'active' : ''}
+                className={list === activeSort ? 'active' : ''}
                 key={i}
                 onClick={() => handleSelectedSort(list)}
               >
