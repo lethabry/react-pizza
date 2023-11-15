@@ -8,7 +8,6 @@ export const getPizzas = (data) => {
   if (data) {
     params = convertObjectToParams(data);
   }
-  console.log(params);
   return fetch(`${BASE_URL}/items?${params}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },

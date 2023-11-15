@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import PizzaBlockLoader from '../components/PizzaBlockLoader';
 import { getPizzas } from '../utils/api';
+import { SearchContext } from '../context/SearchContext';
 
 export default function Home() {
   const [pizzas, setPizzas] = useState([]);
@@ -16,6 +17,7 @@ export default function Home() {
     property: 'rating',
   });
 
+  const searchContext = useContext(SearchContext);
   useEffect(() => {
     setIsLoading(true);
     getPizzas({
@@ -24,12 +26,15 @@ export default function Home() {
       order: `${activeSort.property === 'rating' ? 'desc' : 'asc'}`,
     })
       .then((pizzas) => {
-        setPizzas(pizzas);
+        const filteredPizzas = pizzas.filter((pizza) =>
+          pizza.title.toLowerCase().includes(searchContext.searchValue.toLowerCase()),
+        );
+        setPizzas(filteredPizzas);
         setIsLoading(false);
       })
       .catch((err) => console.log(err));
     window.scrollTo(0, 0);
-  }, [activeSort, activeCategory]);
+  }, [activeSort, activeCategory, searchContext.searchValue]);
 
   return (
     <div className="container">
