@@ -8,6 +8,7 @@ export const filterSlice = createSlice({
       title: 'популярности',
       property: 'rating',
     },
+    selectedPage: 1,
   },
   reducers: {
     setActiveCategory(state, action) {
@@ -16,8 +17,17 @@ export const filterSlice = createSlice({
     setActiveSort(state, action) {
       state.activeSort = action.payload;
     },
+    setSelectedPage(state, action) {
+      state.selectedPage = action.payload;
+    },
+    setUrlFilters(state, action) {
+      state.activeCategory = Number(action.payload.category);
+      state.activeSort = action.payload.sortBy;
+      state.selectedPage = action.payload.currentPage;
+    },
   },
 });
 
-export const { setActiveCategory, setActiveSort } = filterSlice.actions;
+export const { setActiveCategory, setActiveSort, setSelectedPage, setUrlFilters } =
+  filterSlice.actions;
 export default filterSlice.reducer;

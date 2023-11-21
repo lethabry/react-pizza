@@ -1,30 +1,38 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import PizzaBlockLoader from '../components/PizzaBlockLoader';
 import Pagination from '../components/Pagination';
-import { getPizzas } from '../utils/api';
+import { getPizzasAxios } from '../utils/api';
 import { SearchContext } from '../context/SearchContext';
-import { setActiveCategory } from '../store/filterSlice';
+import { setActiveCategory, setUrlFilters } from '../store/filterSlice';
+import { convertObjectToParams } from '../utils/convertObjectToParams';
+import { convertParamsToObject } from '../utils/convertParamsToObject';
+import { sort } from '../utils/constants';
 
 export default function Home() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const isSearch = useRef(false);
+  const isMounted = useRef(false);
 
   const [pizzas, setPizzas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const activeCategory = useSelector((state) => state.filter.activeCategory);
   const activeSort = useSelector((state) => state.filter.activeSort);
-
-  const [selectedPage, setSelectedPage] = useState(1);
+  const selectedPage = useSelector((state) => state.filter.selectedPage);
 
   const searchContext = useContext(SearchContext);
-  useEffect(() => {
+
+  const getPizzas = () => {
     setIsLoading(true);
-    getPizzas({
+    getPizzasAxios({
       limit: '4',
       page: `${selectedPage}`,
       category: `${activeCategory === 0 ? '' : activeCategory}`,
@@ -39,8 +47,38 @@ export default function Home() {
         setIsLoading(false);
       })
       .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    if (window.location.search) {
+      const params = convertParamsToObject(window.location.search.substring(1));
+      const selectedSort = sort.find((item) => item.property === params.sortBy);
+      dispatch(setUrlFilters({ ...params, sortBy: selectedSort }));
+      isSearch.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isSearch.current) {
+      getPizzas();
+    }
+    isSearch.current = false;
     window.scrollTo(0, 0);
   }, [activeSort, activeCategory, searchContext.searchValue, selectedPage]);
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const string =
+        '?' +
+        convertObjectToParams({
+          category: activeCategory,
+          sortBy: activeSort.property,
+          currentPage: selectedPage,
+        });
+      navigate(string);
+    }
+    isMounted.current = true;
+  }, [activeSort, activeCategory, selectedPage]);
 
   return (
     <div className="container">
@@ -57,7 +95,7 @@ export default function Home() {
           ? [...new Array(6)].map((_, i) => <PizzaBlockLoader key={i} />)
           : pizzas.map((pizza) => <PizzaBlock key={pizza.id} {...pizza} />)}
       </div>
-      <Pagination onChangePage={(number) => setSelectedPage(number)} />
+      <Pagination />
     </div>
   );
 }

@@ -1,8 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-export default function PizzaBlock({ imageUrl, title, price, sizes, types }) {
+import { setItem } from '../store/shoppingCartSlice';
+
+export default function PizzaBlock({ imageUrl, title, price, sizes, types, id }) {
   const [activeSize, setActiveSize] = useState(0);
   const [activeType, setActiveType] = useState(0);
+
+  const [summaryAmount, setSummaryAmount] = useState(0);
+
+  const dispatch = useDispatch();
+  const { shoppingCart } = useSelector((state) => state.shoppingCart);
+
+  useEffect(() => {
+    setSummaryAmount(() =>
+      shoppingCart
+        .filter((item) => item.id === id)
+        .reduce((total, current) => (total += current.amount), 0),
+    );
+  }, [shoppingCart]);
 
   return (
     <div className="pizza-block">
@@ -34,7 +50,22 @@ export default function PizzaBlock({ imageUrl, title, price, sizes, types }) {
       </div>
       <div className="pizza-block__bottom">
         <div className="pizza-block__price">от {price} ₽</div>
-        <button className="button button--outline button--add">
+        <button
+          className="button button--outline button--add"
+          onClick={() =>
+            dispatch(
+              setItem({
+                imageUrl,
+                title,
+                price,
+                sizes: sizes[activeSize],
+                types: activeType,
+                id,
+                amount: 1,
+              }),
+            )
+          }
+        >
           <svg
             width="12"
             height="12"
@@ -48,7 +79,7 @@ export default function PizzaBlock({ imageUrl, title, price, sizes, types }) {
             />
           </svg>
           <span>Добавить</span>
-          <i>0</i>
+          <i>{summaryAmount}</i>
         </button>
       </div>
     </div>

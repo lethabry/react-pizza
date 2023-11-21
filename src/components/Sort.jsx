@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { sort } from '../utils/constants';
@@ -16,8 +16,24 @@ export default function Sort() {
     setIsOpenSort(false);
   };
 
+  const sortRef = useRef();
+
+  useEffect(() => {
+    const closePopup = (event) => {
+      const path = event.composedPath();
+      if (!path.includes(sortRef.current)) {
+        setIsOpenSort(false);
+      }
+    };
+
+    document.addEventListener('click', closePopup);
+    return () => {
+      document.removeEventListener('click', closePopup);
+    };
+  }, []);
+
   return (
-    <div className="sort">
+    <div className="sort" ref={sortRef}>
       <div className="sort__label">
         <svg
           width="10"
