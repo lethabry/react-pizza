@@ -13,6 +13,8 @@ import { setActiveCategory, setUrlFilters } from '../store/filterSlice';
 import { convertObjectToParams } from '../utils/convertObjectToParams';
 import { convertParamsToObject } from '../utils/convertParamsToObject';
 import { sort } from '../utils/constants';
+import { getPizzasFetch } from '../store/pizzasSlice';
+import { setPizzas } from '../store/pizzasSlice';
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -21,30 +23,18 @@ export default function Home() {
   const isSearch = useRef(false);
   const isMounted = useRef(false);
 
-  const [pizzas, setPizzas] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const activeCategory = useSelector((state) => state.filter.activeCategory);
-  const activeSort = useSelector((state) => state.filter.activeSort);
-  const selectedPage = useSelector((state) => state.filter.selectedPage);
+  const { activeCategory, activeSort, selectedPage } = useSelector((state) => state.filter);
+  const { pizzas, status } = useSelector((state) => state.pizzas);
 
   const searchContext = useContext(SearchContext);
 
   const getPizzas = () => {
-    setIsLoading(true);
-    getPizzasAxios({
-      limit: '4',
-      page: `${selectedPage}`,
-      category: `${activeCategory === 0 ? '' : activeCategory}`,
-      sortBy: activeSort.property,
-      order: `${activeSort.property === 'rating' ? 'desc' : 'asc'}`,
-    })
+    dispatch(getPizzasFetch({ selectedPage, activeCategory, activeSort }))
       .then((pizzas) => {
         const filteredPizzas = pizzas.filter((pizza) =>
           pizza.title.toLowerCase().includes(searchContext.searchValue.toLowerCase()),
         );
-        setPizzas(filteredPizzas);
-        setIsLoading(false);
+        dispatch(setPizzas(filteredPizzas));
       })
       .catch((err) => console.log(err));
   };
@@ -91,9 +81,16 @@ export default function Home() {
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
-        {isLoading
-          ? [...new Array(6)].map((_, i) => <PizzaBlockLoader key={i} />)
-          : pizzas.map((pizza) => <PizzaBlock key={pizza.id} {...pizza} />)}
+        {status === 'loading' ? (
+          [...new Array(6)].map((_, i) => <PizzaBlockLoader key={i} />)
+        ) : status === 'success' ? (
+          pizzas.map((pizza) => <PizzaBlock key={pizza.id} {...pizza} />)
+        ) : (
+          <div className="content__error-info">
+            <h2>Прозошла ошибка</h2>
+            <p>К сожалению, не удалось получить пиццы. Попробуйте повторить попытку позже.</p>
+          </div>
+        )}
       </div>
       <Pagination />
     </div>
