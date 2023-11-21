@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { setItem } from '../store/shoppingCartSlice';
+import { selectShoppingCart, setItem } from '../store/shoppingCartSlice';
 
 export default function PizzaBlock({ imageUrl, title, price, sizes, types, id }) {
   const [activeSize, setActiveSize] = useState(0);
@@ -10,7 +10,7 @@ export default function PizzaBlock({ imageUrl, title, price, sizes, types, id })
   const [summaryAmount, setSummaryAmount] = useState(0);
 
   const dispatch = useDispatch();
-  const { shoppingCart } = useSelector((state) => state.shoppingCart);
+  const { shoppingCart } = useSelector(selectShoppingCart);
 
   useEffect(() => {
     setSummaryAmount(() =>

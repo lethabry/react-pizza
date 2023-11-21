@@ -7,8 +7,6 @@ import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import PizzaBlockLoader from '../components/PizzaBlockLoader';
 import Pagination from '../components/Pagination';
-import { getPizzasAxios } from '../utils/api';
-import { SearchContext } from '../context/SearchContext';
 import { setActiveCategory, setUrlFilters } from '../store/filterSlice';
 import { convertObjectToParams } from '../utils/convertObjectToParams';
 import { convertParamsToObject } from '../utils/convertParamsToObject';
@@ -23,16 +21,16 @@ export default function Home() {
   const isSearch = useRef(false);
   const isMounted = useRef(false);
 
-  const { activeCategory, activeSort, selectedPage } = useSelector((state) => state.filter);
+  const { activeCategory, activeSort, selectedPage, searchValue } = useSelector(
+    (state) => state.filter,
+  );
   const { pizzas, status } = useSelector((state) => state.pizzas);
-
-  const searchContext = useContext(SearchContext);
 
   const getPizzas = () => {
     dispatch(getPizzasFetch({ selectedPage, activeCategory, activeSort }))
       .then((pizzas) => {
-        const filteredPizzas = pizzas.filter((pizza) =>
-          pizza.title.toLowerCase().includes(searchContext.searchValue.toLowerCase()),
+        const filteredPizzas = pizzas.payload.filter((pizza) =>
+          pizza.title.toLowerCase().includes(searchValue.toLowerCase()),
         );
         dispatch(setPizzas(filteredPizzas));
       })
@@ -54,7 +52,7 @@ export default function Home() {
     }
     isSearch.current = false;
     window.scrollTo(0, 0);
-  }, [activeSort, activeCategory, searchContext.searchValue, selectedPage]);
+  }, [activeSort, activeCategory, searchValue, selectedPage]);
 
   useEffect(() => {
     if (isMounted.current) {

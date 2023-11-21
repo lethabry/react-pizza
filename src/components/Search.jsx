@@ -1,17 +1,19 @@
-import { useContext, useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import debounce from 'lodash.debounce';
 
+import { setSearchValue } from '../store/filterSlice';
 import styles from '../modules/Search.module.scss';
-import { SearchContext } from '../context/SearchContext';
 
 export default function Search() {
+  const dispatch = useDispatch();
+
   const [value, setValue] = useState('');
 
-  const { handleSearchValue } = useContext(SearchContext);
   const inputRef = useRef(null);
 
   const defferRequest = useCallback(
-    debounce((value) => handleSearchValue(value), 500),
+    debounce((value) => dispatch(setSearchValue(value)), 500),
     [],
   );
 
@@ -21,7 +23,8 @@ export default function Search() {
   };
 
   const onClearButtonClick = () => {
-    handleSearchValue('');
+    dispatch(setSearchValue(''));
+    setValue('');
     inputRef.current.focus();
   };
 
@@ -46,7 +49,7 @@ export default function Search() {
       </svg>
       <svg
         className={styles.clear}
-        onClick={onClearButtonClick}
+        onClick={() => onClearButtonClick()}
         fill="none"
         height="24"
         viewBox="0 0 24 24"

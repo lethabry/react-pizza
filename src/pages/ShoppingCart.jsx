@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import ShoppingCartEmpty from '../components/ShoppinCartEmpty';
-import { clearShoppingCart } from '../store/shoppingCartSlice';
+import { clearShoppingCart, selectShoppingCart } from '../store/shoppingCartSlice';
 import ShoppingCartItem from '../components/ShoppingCartItem';
 
 export default function ShoppingCart() {
   const dispatch = useDispatch();
-  const { shoppingCart, summaryPrice, summaryAmount } = useSelector((state) => state.shoppingCart);
+  const { shoppingCart, summaryPrice, summaryAmount } = useSelector(selectShoppingCart);
 
   return shoppingCart.length > 0 ? (
     <div className="container container--cart">

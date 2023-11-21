@@ -32,7 +32,6 @@ const pizzasSlice = createSlice({
         state.pizzas = action.payload;
       })
       .addCase(getPizzasFetch.pending, (state) => {
-        state.pizzas = [];
         state.status = 'loading';
       })
       .addCase(getPizzasFetch.rejected, (state) => {
