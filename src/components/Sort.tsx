@@ -19,9 +19,9 @@ export default function Sort() {
   const sortRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const closePopup = (event: any) => {
-      const path = event.composedPath();
-      if (!path.includes(sortRef.current)) {
+    const closePopup = (event: MouseEvent) => {
+      const path = event?.composedPath() || [];
+      if (sortRef.current && !path.includes(sortRef.current)) {
         setIsOpenSort(false);
       }
     };

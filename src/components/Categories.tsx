@@ -2,7 +2,7 @@ import { categories } from '../utils/constants';
 
 type CategoriesProps = {
   value: number;
-  onCategoryClick: any;
+  onCategoryClick: (i: number) => void;
 };
 
 export default function Categories({ value, onCategoryClick }: CategoriesProps) {

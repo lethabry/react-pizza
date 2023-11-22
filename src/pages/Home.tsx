@@ -48,7 +48,7 @@ export default function Home() {
         );
         dispatch(setPizzas(filteredPizzas));
       })
-      .catch((err: any) => console.log(err));
+      .catch((err: Error) => console.log(err));
   };
 
   useEffect(() => {
