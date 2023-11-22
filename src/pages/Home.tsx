@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,19 @@ import { convertParamsToObject } from '../utils/convertParamsToObject';
 import { sort } from '../utils/constants';
 import { getPizzasFetch } from '../store/pizzasSlice';
 import { setPizzas } from '../store/pizzasSlice';
+import { PizzaBlockProps } from '../utils/constants';
+
+type PizzaType = {
+  payload: {
+    id: number;
+    imageUrl: string;
+    title: string;
+    sizes: number[];
+    amount: number;
+    price: number;
+    types: number[];
+  }[];
+};
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -22,19 +35,20 @@ export default function Home() {
   const isMounted = useRef(false);
 
   const { activeCategory, activeSort, selectedPage, searchValue } = useSelector(
-    (state) => state.filter,
+    (state: any) => state.filter,
   );
-  const { pizzas, status } = useSelector((state) => state.pizzas);
+  const { pizzas, status } = useSelector((state: any) => state.pizzas);
 
   const getPizzas = () => {
+    // @ts-ignore
     dispatch(getPizzasFetch({ selectedPage, activeCategory, activeSort }))
-      .then((pizzas) => {
+      .then((pizzas: PizzaType) => {
         const filteredPizzas = pizzas.payload.filter((pizza) =>
           pizza.title.toLowerCase().includes(searchValue.toLowerCase()),
         );
         dispatch(setPizzas(filteredPizzas));
       })
-      .catch((err) => console.log(err));
+      .catch((err: any) => console.log(err));
   };
 
   useEffect(() => {
@@ -73,7 +87,7 @@ export default function Home() {
       <div className="content__top">
         <Categories
           value={activeCategory}
-          onCategoryClick={(i) => dispatch(setActiveCategory(i))}
+          onCategoryClick={(i: number) => dispatch(setActiveCategory(i))}
         />
         <Sort />
       </div>
@@ -82,7 +96,7 @@ export default function Home() {
         {status === 'loading' ? (
           [...new Array(6)].map((_, i) => <PizzaBlockLoader key={i} />)
         ) : status === 'success' ? (
-          pizzas.map((pizza) => <PizzaBlock key={pizza.id} {...pizza} />)
+          pizzas.map((pizza: PizzaBlockProps) => <PizzaBlock key={pizza.id} {...pizza} />)
         ) : (
           <div className="content__error-info">
             <h2>Прозошла ошибка</h2>

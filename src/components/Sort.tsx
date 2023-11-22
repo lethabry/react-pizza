@@ -1,25 +1,25 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { sort } from '../utils/constants';
+import { sort, SortItem } from '../utils/constants';
 import { setActiveSort } from '../store/filterSlice';
 
 export default function Sort() {
   const dispatch = useDispatch();
-  const activeSort = useSelector((state) => state.filter.activeSort);
+  const activeSort = useSelector((state: any) => state.filter.activeSort);
 
-  const [isOpenSort, setIsOpenSort] = useState(false);
+  const [isOpenSort, setIsOpenSort] = useState<boolean>(false);
   const handleOpenSort = () => setIsOpenSort(!isOpenSort);
 
-  const handleSelectedSort = (i) => {
+  const handleSelectedSort = (i: SortItem) => {
     dispatch(setActiveSort(i));
     setIsOpenSort(false);
   };
 
-  const sortRef = useRef();
+  const sortRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const closePopup = (event) => {
+    const closePopup = (event: any) => {
       const path = event.composedPath();
       if (!path.includes(sortRef.current)) {
         setIsOpenSort(false);
@@ -53,7 +53,7 @@ export default function Sort() {
       {isOpenSort && (
         <div className="sort__popup">
           <ul>
-            {sort.map((list, i) => (
+            {sort.map((list: { title: string; property: string }, i: number) => (
               <li
                 className={list === activeSort ? 'active' : ''}
                 key={i}

@@ -1,6 +1,11 @@
 import { categories } from '../utils/constants';
 
-export default function Categories({ value, onCategoryClick }) {
+type CategoriesProps = {
+  value: number;
+  onCategoryClick: any;
+};
+
+export default function Categories({ value, onCategoryClick }: CategoriesProps) {
   return (
     <div className="categories">
       <ul>

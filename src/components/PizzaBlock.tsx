@@ -2,8 +2,19 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { selectShoppingCart, setItem } from '../store/shoppingCartSlice';
+import { PizzaBlockProps } from '../utils/constants';
 
-export default function PizzaBlock({ imageUrl, title, price, sizes, types, id }) {
+// type PizzaBlockProps = {
+//   id: number;
+//   imageUrl: string;
+//   title: string;
+//   sizes: number[];
+//   amount: number;
+//   price: number;
+//   types: number[];
+// };
+
+export default function PizzaBlock({ imageUrl, title, price, sizes, types, id }: PizzaBlockProps) {
   const [activeSize, setActiveSize] = useState(0);
   const [activeType, setActiveType] = useState(0);
 
@@ -15,8 +26,8 @@ export default function PizzaBlock({ imageUrl, title, price, sizes, types, id })
   useEffect(() => {
     setSummaryAmount(() =>
       shoppingCart
-        .filter((item) => item.id === id)
-        .reduce((total, current) => (total += current.amount), 0),
+        .filter((item: { id: number }) => item.id === id)
+        .reduce((total: number, current: { amount: number }) => (total += current.amount), 0),
     );
   }, [shoppingCart]);
 
@@ -26,7 +37,7 @@ export default function PizzaBlock({ imageUrl, title, price, sizes, types, id })
       <h4 className="pizza-block__title">{title}</h4>
       <div className="pizza-block__selector">
         <ul>
-          {types.map((type, i) => (
+          {types.map((type: number, i: number) => (
             <li
               onClick={() => setActiveType(i)}
               className={i === activeType ? 'active' : ''}
@@ -37,7 +48,7 @@ export default function PizzaBlock({ imageUrl, title, price, sizes, types, id })
           ))}
         </ul>
         <ul>
-          {sizes.map((size, i) => (
+          {sizes.map((size: number, i: number) => (
             <li
               onClick={() => setActiveSize(i)}
               className={i === activeSize ? 'active' : ''}

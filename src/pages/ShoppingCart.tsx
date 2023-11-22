@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import ShoppingCartEmpty from '../components/ShoppinCartEmpty';
 import { clearShoppingCart, selectShoppingCart } from '../store/shoppingCartSlice';
 import ShoppingCartItem from '../components/ShoppingCartItem';
+import { ShoppingCartItemType } from '../utils/constants';
 
 export default function ShoppingCart() {
   const dispatch = useDispatch();
@@ -86,7 +87,7 @@ export default function ShoppingCart() {
           </div>
         </div>
         <div className="content__items shopping-cart__items">
-          {shoppingCart.map((item, i) => (
+          {shoppingCart.map((item: ShoppingCartItemType, i: number) => (
             <ShoppingCartItem item={item} key={i} />
           ))}
         </div>

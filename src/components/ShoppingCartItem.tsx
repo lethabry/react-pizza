@@ -1,11 +1,23 @@
 import { useDispatch } from 'react-redux';
 
 import { changeAmount, removeItem } from '../store/shoppingCartSlice';
+import { ShoppingCartItemType } from '../utils/constants';
 
-export default function ShoppingCartItem({ item }) {
+type ShoppingCartItemProp = {
+  item: {
+    id: number;
+    imageUrl: string;
+    title: string;
+    sizes: number;
+    amount: number;
+    price: number;
+    types: number;
+  };
+};
+
+export default function ShoppingCartItem({ item }: ShoppingCartItemProp) {
   const dispatch = useDispatch();
-
-  const handleAmount = (item, count, operator) => {
+  const handleAmount = (item: ShoppingCartItemType, count: number, operator: string) => {
     if (count === 1 && operator === '-') {
       dispatch(removeItem(item));
       return;

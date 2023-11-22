@@ -10,14 +10,14 @@ export default function Search() {
 
   const [value, setValue] = useState('');
 
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const defferRequest = useCallback(
-    debounce((value) => dispatch(setSearchValue(value)), 500),
+    debounce((value: string) => dispatch(setSearchValue(value)), 500),
     [],
   );
 
-  const onChangeInput = (value) => {
+  const onChangeInput = (value: string) => {
     setValue(value);
     defferRequest(value);
   };
@@ -25,7 +25,7 @@ export default function Search() {
   const onClearButtonClick = () => {
     dispatch(setSearchValue(''));
     setValue('');
-    inputRef.current.focus();
+    inputRef.current?.focus();
   };
 
   return (
