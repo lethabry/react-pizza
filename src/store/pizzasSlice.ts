@@ -1,10 +1,30 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { getPizzasAxios } from '../utils/api';
+import { PizzaBlockProps } from '../utils/constants';
+
+interface PizzaSliceInterface {
+  pizzas: PizzaBlockProps[];
+  status: string;
+}
+
+export type GetPizzasArgs = {
+  selectedPage: number;
+  activeCategory: number;
+  activeSort: {
+    property: string;
+    title: string;
+  };
+};
+
+const initialState: PizzaSliceInterface = {
+  pizzas: [],
+  status: 'loading',
+};
 
 export const getPizzasFetch = createAsyncThunk(
   'pizzas/getPizzasFetch',
-  async ({ selectedPage, activeCategory, activeSort }) =>
+  async ({ selectedPage, activeCategory, activeSort }: GetPizzasArgs) =>
     await getPizzasAxios({
       limit: '4',
       page: `${selectedPage}`,
@@ -16,18 +36,15 @@ export const getPizzasFetch = createAsyncThunk(
 
 const pizzasSlice = createSlice({
   name: 'pizzas',
-  initialState: {
-    pizzas: [],
-    status: 'loading',
-  },
+  initialState,
   reducers: {
-    setPizzas(state, action) {
+    setPizzas(state, action: PayloadAction<PizzaBlockProps[]>) {
       state.pizzas = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getPizzasFetch.fulfilled, (state, action) => {
+      .addCase(getPizzasFetch.fulfilled, (state, action: PayloadAction<PizzaBlockProps[]>) => {
         state.status = 'success';
         state.pizzas = action.payload;
       })

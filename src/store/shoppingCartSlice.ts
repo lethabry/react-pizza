@@ -1,15 +1,31 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { ShoppingCartItemType } from '../utils/constants';
+import { RootState } from './store';
+
+interface ShoppinCartInterface {
+  summaryPrice: number;
+  summaryAmount: number;
+  shoppingCart: ShoppingCartItemType[];
+}
+
+type ChangerAmountPayload = {
+  item: ShoppingCartItemType;
+  amount: number;
+};
+
+const initialState: ShoppinCartInterface = {
+  shoppingCart: [],
+  summaryPrice: 0,
+  summaryAmount: 0,
+};
 
 const shoppingCartSlice = createSlice({
   name: 'shoppingCart',
-  initialState: {
-    shoppingCart: [],
-    summaryPrice: 0,
-    summaryAmount: 0,
-  },
+  initialState,
   reducers: {
-    setItem(state, action) {
-      const equalItemIndex = state.shoppingCart.findIndex(
+    setItem(state, action: PayloadAction<ShoppingCartItemType>) {
+      const equalItemIndex: number = state.shoppingCart.findIndex(
         (item) =>
           item.id === action.payload.id &&
           item.types === action.payload.types &&
@@ -29,9 +45,9 @@ const shoppingCartSlice = createSlice({
         0,
       );
     },
-    changeAmount(state, action) {
+    changeAmount(state, action: PayloadAction<ChangerAmountPayload>) {
       const { item, amount } = action.payload;
-      const equalItemIndex = state.shoppingCart.findIndex(
+      const equalItemIndex: number = state.shoppingCart.findIndex(
         (shoppingCartItem) =>
           shoppingCartItem.id === item.id &&
           shoppingCartItem.types === item.types &&
@@ -47,7 +63,7 @@ const shoppingCartSlice = createSlice({
         0,
       );
     },
-    removeItem(state, action) {
+    removeItem(state, action: PayloadAction<ShoppingCartItemType>) {
       state.shoppingCart = state.shoppingCart.filter(
         (item) =>
           item.id !== action.payload.id ||
@@ -71,7 +87,7 @@ const shoppingCartSlice = createSlice({
   },
 });
 
-export const selectShoppingCart = (state) => state.shoppingCart;
+export const selectShoppingCart = (state: RootState) => state.shoppingCart;
 
 export const { setItem, removeItem, changeAmount, clearShoppingCart } = shoppingCartSlice.actions;
 export default shoppingCartSlice.reducer;

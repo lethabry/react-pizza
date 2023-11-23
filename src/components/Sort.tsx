@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { sort, SortItem } from '../utils/constants';
 import { setActiveSort } from '../store/filterSlice';
+import { RootState } from '../store/store';
 
 export default function Sort() {
   const dispatch = useDispatch();
-  const activeSort = useSelector((state: any) => state.filter.activeSort);
+  const activeSort = useSelector((state: RootState) => state.filter.activeSort);
 
   const [isOpenSort, setIsOpenSort] = useState<boolean>(false);
   const handleOpenSort = () => setIsOpenSort(!isOpenSort);

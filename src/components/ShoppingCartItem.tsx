@@ -22,18 +22,19 @@ export default function ShoppingCartItem({ item }: ShoppingCartItemProp) {
       dispatch(removeItem(item));
       return;
     }
-    let amount;
+    let amount: number;
     switch (operator) {
       case '+':
         amount = count + 1;
+        dispatch(changeAmount({ item, amount }));
         break;
       case '-':
         amount = count - 1;
+        dispatch(changeAmount({ item, amount }));
         break;
       default:
         break;
     }
-    dispatch(changeAmount({ item, amount }));
   };
   return (
     <div className="cart__item">

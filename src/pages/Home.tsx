@@ -7,13 +7,14 @@ import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import PizzaBlockLoader from '../components/PizzaBlockLoader';
 import Pagination from '../components/Pagination';
-import { setActiveCategory, setUrlFilters } from '../store/filterSlice';
+import { setActiveCategory, setUrlFilters, UrlPayload } from '../store/filterSlice';
 import { convertObjectToParams } from '../utils/convertObjectToParams';
 import { convertParamsToObject } from '../utils/convertParamsToObject';
-import { sort } from '../utils/constants';
+import { sort, SortItem } from '../utils/constants';
 import { getPizzasFetch } from '../store/pizzasSlice';
 import { setPizzas } from '../store/pizzasSlice';
 import { PizzaBlockProps } from '../utils/constants';
+import { RootState } from '../store/store';
 
 type PizzaType = {
   payload: {
@@ -35,9 +36,9 @@ export default function Home() {
   const isMounted = useRef(false);
 
   const { activeCategory, activeSort, selectedPage, searchValue } = useSelector(
-    (state: any) => state.filter,
+    (state: RootState) => state.filter,
   );
-  const { pizzas, status } = useSelector((state: any) => state.pizzas);
+  const { pizzas, status } = useSelector((state: RootState) => state.pizzas);
 
   const getPizzas = () => {
     // @ts-ignore
@@ -54,8 +55,18 @@ export default function Home() {
   useEffect(() => {
     if (window.location.search) {
       const params = convertParamsToObject(window.location.search.substring(1));
-      const selectedSort = sort.find((item) => item.property === params.sortBy);
-      dispatch(setUrlFilters({ ...params, sortBy: selectedSort }));
+      const selectedSort: SortItem = sort.find((item) => item.property === params.sortBy) || {
+        title: 'популярности',
+        property: 'rating',
+      };
+      const object = {
+        category: params.category,
+        currentPage: params.currentPage,
+        sortBy: selectedSort,
+      };
+      if (selectedSort) {
+        dispatch(setUrlFilters(object));
+      }
       isSearch.current = true;
     }
   }, []);
