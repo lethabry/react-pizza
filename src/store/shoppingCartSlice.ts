@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ShoppingCartItemType } from '../utils/constants';
+import { getShoppingCartFromLocalStorage } from '../utils/getDataFromLocalStorage';
 import { RootState } from './store';
 
 interface ShoppinCartInterface {
@@ -15,9 +16,16 @@ type ChangerAmountPayload = {
 };
 
 const initialState: ShoppinCartInterface = {
-  shoppingCart: [],
-  summaryPrice: 0,
-  summaryAmount: 0,
+  shoppingCart: getShoppingCartFromLocalStorage(),
+  summaryPrice: getShoppingCartFromLocalStorage().reduce(
+    (total: number, current: { price: number; amount: number }) =>
+      (total += current.price * current.amount),
+    0,
+  ),
+  summaryAmount: getShoppingCartFromLocalStorage().reduce(
+    (total: number, current: { amount: number }) => (total += current.amount),
+    0,
+  ),
 };
 
 const shoppingCartSlice = createSlice({

@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { sort, SortItem } from '../utils/constants';
 import { setActiveSort } from '../store/filterSlice';
 import { RootState } from '../store/store';
 
-export default function Sort() {
+const Sort = memo(() => {
   const dispatch = useDispatch();
   const activeSort = useSelector((state: RootState) => state.filter.activeSort);
 
@@ -68,4 +68,6 @@ export default function Sort() {
       )}
     </div>
   );
-}
+});
+
+export default Sort;

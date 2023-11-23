@@ -1,11 +1,12 @@
 import { categories } from '../utils/constants';
+import { memo } from 'react';
 
 type CategoriesProps = {
   value: number;
   onCategoryClick: (i: number) => void;
 };
 
-export default function Categories({ value, onCategoryClick }: CategoriesProps) {
+const Categories = memo(({ value, onCategoryClick }: CategoriesProps) => {
   return (
     <div className="categories">
       <ul>
@@ -17,4 +18,6 @@ export default function Categories({ value, onCategoryClick }: CategoriesProps) 
       </ul>
     </div>
   );
-}
+});
+
+export default Categories;

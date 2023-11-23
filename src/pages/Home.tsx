@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +7,7 @@ import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import PizzaBlockLoader from '../components/PizzaBlockLoader';
 import Pagination from '../components/Pagination';
-import { setActiveCategory, setUrlFilters, UrlPayload } from '../store/filterSlice';
+import { setActiveCategory, setUrlFilters } from '../store/filterSlice';
 import { convertObjectToParams } from '../utils/convertObjectToParams';
 import { convertParamsToObject } from '../utils/convertParamsToObject';
 import { sort, SortItem } from '../utils/constants';
@@ -39,6 +39,8 @@ export default function Home() {
     (state: RootState) => state.filter,
   );
   const { pizzas, status } = useSelector((state: RootState) => state.pizzas);
+
+  const onCatedoryChange = useCallback((i: number) => dispatch(setActiveCategory(i)), []);
 
   const getPizzas = () => {
     // @ts-ignore
@@ -96,10 +98,7 @@ export default function Home() {
   return (
     <div className="container">
       <div className="content__top">
-        <Categories
-          value={activeCategory}
-          onCategoryClick={(i: number) => dispatch(setActiveCategory(i))}
-        />
+        <Categories value={activeCategory} onCategoryClick={onCatedoryChange} />
         <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
